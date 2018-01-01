@@ -13,8 +13,7 @@ int main(void) {
 	printf("現在所在位置 : ");
 	system("ECHO %CD%");
 	printf("輸入影像檔案 : ");
-	//scanf_s("%s",PATH,sizeof(PATH));
-	system("pause");
+	scanf_s("%s",PATH,sizeof(PATH));
 	printf("開啟%s\n",PATH);
 	FILE *BMPFILE;
 	FILE *OUTPUTFILE;
@@ -43,11 +42,13 @@ int main(void) {
 
 	color *BMPLostFocus = LostFocus(Header, BMPColor, 3);
 	printImagesInConsole(Header, BMPLostFocus, 500, 100 + Header.Height);
-
-
+	/*
+	color *err = errorImage(Header,BMPGrayscale);
+	printImagesInConsole(Header, err, 500 + Header.Width, 100 + Header.Height);
+	*/
 	color * BMPDithering = FloydSteinbergDithering(Header, BMPColor);
 	printImagesInConsole(Header, BMPDithering, 500 + Header.Width, 100 + Header.Height);
-
+	
 
 
 	

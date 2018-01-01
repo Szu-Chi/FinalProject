@@ -74,9 +74,9 @@ color *LostFocus(BMP_Header Header, color *BMPColor, int range) {
 	return data;
 }
 
-color *BinaryImage(BMP_Header Header, color* Gray) {
+color *BinaryImage(BMP_Header Header, color* BMPColor) {
 	HSLColor *BMP_HSLColor;
-	BMP_HSLColor = convertRGBtoHSL(Header, Gray);
+	BMP_HSLColor = convertRGBtoHSL(Header, BMPColor);
 
 	double totalL = 0;
 	for (int i = 0; i < Header.Height; i++)
@@ -105,44 +105,70 @@ color *BinaryImage(BMP_Header Header, color* Gray) {
 	return data;
 }
 
+color *copyImage(BMP_Header Header, color *BMPColor) {
+	color *copy = calloc(Header.Width * Header.Height, sizeof(color));
+	for (int i = 0; i < Header.Height; i++)
+		for (unsigned int j = 0; j < Header.Width; j++) {
+			int index = i*Header.Width + j;
+			copy[index].R = BMPColor[index].R;
+			copy[index].G = BMPColor[index].G;
+			copy[index].B = BMPColor[index].B;
+		}
+	return copy;
+}
+
 color *FloydSteinbergDithering(BMP_Header Header, color *BMPColor) {
-	color *Gray = Grayscale(Header, BMPColor);
-	color *Binary = BinaryImage(Header, Gray);
-	//color *data = calloc(Header.Height*Header.Width, sizeof(color));
-	for (int i = Header.Height - 2; i >= 1; i--) {
+	color *data = calloc(Header.Width * Header.Height, sizeof(color));
+	color *cp = copyImage(Header, BMPColor);
+	for (int i = Header.Height - 1; i >= 1; i--)
 		for (unsigned int j = 1; j < Header.Width - 1; j++) {
 			int index = i*Header.Width + j;
-			int index2 = (i + 1)*Header.Width + j;
-			Gray[index2].R = Gray[index].R;
-			Gray[index2].B = Gray[index].B;
-			Gray[index2].G = Gray[index].G;
-			/*
-			color avg = getAverColor(Header, Gray, j, i, 1);
-			color err;
-			err.R = Gray[index].R - avg.R;
-			err.G = Gray[index].G - avg.G;
-			err.B = Gray[index].B - avg.B;
+			int index2 = (i - 1)*Header.Width + j;
+			if (cp[index].R > 127) {
+				data[index].R = 255;
+				cp[index + 1].R += (cp[index].R - 255) * 7 / 16;
+				cp[index2 - 1].R += (cp[index].R - 255) * 3 / 16;
+				cp[index2].R += (cp[index].R - 255) * 5 / 16;
+				cp[index2 + 1].R += (cp[index].R - 255) * 1 / 16;
+			}
+			else {
+				data[index].R = 0;
+				cp[index + 1].R += cp[index].R * 7 / 16;
+				cp[index2].R += cp[index].R * 5 / 16;
+				cp[index2 - 1].R += cp[index].R * 3 / 16;
+				cp[index2 + 1].R += cp[index].R * 1 / 16;
+			}
 
-			Gray[index].R = avg.R;
-			Gray[index].G = avg.G;
-			Gray[index].B = avg.B;
+			if (cp[index].G > 127) {
+				data[index].G = 255;
+				cp[index + 1].G += (cp[index].G - 255) * 7 / 16;
+				cp[index2 - 1].G += (cp[index].G - 255) * 3 / 16;
+				cp[index2].G += (cp[index].G - 255) * 5 / 16;
+				cp[index2 + 1].G += (cp[index].G - 255) * 1 / 16;
+			}
+			else {
+				data[index].G = 0;
+				cp[index + 1].G += cp[index].G * 7 / 16;
+				cp[index2].G += cp[index].G * 5 / 16;
+				cp[index2 - 1].G += cp[index].G * 3 / 16;
+				cp[index2 + 1].G += cp[index].G * 1 / 16;
+			}
 
-			Gray[index + 1].R += err.R * 7 / 16;
-			Gray[index2 - 1].R += err.R * 3 / 16;
-			Gray[index2].R += err.R * 5 / 16;
-			Gray[index2 + 1].R += err.R * 1 / 16;
-
-			Gray[index + 1].G += err.G * 7 / 16;
-			Gray[index2 - 1].G += err.G * 3 / 16;
-			Gray[index2].G += err.G * 5 / 16;
-			Gray[index2 + 1].G += err.G * 1 / 16;
-
-			Gray[index + 1].B += err.B * 7 / 16;
-			Gray[index2 - 1].B += err.B * 3 / 16;
-			Gray[index2].B += err.B * 5 / 16;
-			Gray[index2 + 1].B += err.B * 1 / 16;*/
+			if (cp[index].B > 127) {
+				data[index].B = 255;
+				cp[index + 1].B += (cp[index].B - 255) * 7 / 16;
+				cp[index2 - 1].B += (cp[index].B - 255) * 3 / 16;
+				cp[index2].B += (cp[index].B - 255) * 5 / 16;
+				cp[index2 + 1].B += (cp[index].B - 255) * 1 / 16;
+			}
+			else {
+				data[index].B = 0;
+				cp[index + 1].B += cp[index].B * 7 / 16;
+				cp[index2].B += cp[index].B * 5 / 16;
+				cp[index2 - 1].B += cp[index].B * 3 / 16;
+				cp[index2 + 1].B += cp[index].B * 1 / 16;
+			}
 		}
-	}
-	free(Gray);
-	return Binary;
+	free(cp);
+	return data;
 }
