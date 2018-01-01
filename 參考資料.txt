@@ -4,3 +4,4 @@ https://pydoing.blogspot.tw/2010/07/c-fseek.html
 http://www.pcschool.com.tw/campus/share/lib/160/
 http://capricorn-liver.blogspot.tw/2010/11/cbmp.html
 https://msdn.microsoft.com/zh-tw/library/z5hh6ee9.aspx
+https://stackoverflow.com/questions/12378642/c-pixels-in-console-window

@@ -1,6 +1,7 @@
-#include <stdio.h>
+Ôªø#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <windows.h>
 typedef struct color {
 	uint8_t R;
 	uint8_t G;
@@ -135,11 +136,29 @@ void BMPPrintHeader(BMP_Header *Header) {
 }
 
 int main(void) {
+	//Get a console handle
+	HWND myconsole = GetConsoleWindow();
+	//Get a handle to device context
+	HDC mydc = GetDC(myconsole);
+
+	int pixel = 0;
+
+
+
+	char PATH[80];
+	printf("ÁèæÂú®ÊâÄÂú®‰ΩçÁΩÆ : ");
+	system("ECHO %CD%");
+	printf("Ëº∏ÂÖ•ÂΩ±ÂÉèÊ™îÊ°à : ");
+	scanf_s("%s",PATH,sizeof(PATH));
+	printf("ÈñãÂïü%s\n",PATH);
 	FILE *BMPFILE;
+	FILE *OUTPUTFILE;
 	BMP_Header Header;
-	errno_t OpenError;
-	OpenError = fopen_s(&BMPFILE, "D:\\0¶U¨Ïß@∑~\\∞™∂•µ{¶°ªy®•\\Homework\\Final Project_PrintImage\\0_\\temp\\debug\\images\\test1.bmp", "rb");
-	if (OpenError) {
+	errno_t OpenBMP, OpenOUTPUT;
+	//OpenBMP = fopen_s(&BMPFILE, PATH, "rb");
+	OpenBMP = fopen_s(&BMPFILE, PATH, "rb");
+	OpenOUTPUT = fopen_s(&OUTPUTFILE, "output.txt", "w");
+	if (OpenBMP || OpenOUTPUT) {
 		printf("Open File Error!!\n");
 		system("pause");
 		return 1;
@@ -168,7 +187,7 @@ int main(void) {
 			fseek(BMPFILE, address++, SEEK_SET);
 			fread(&BMPColor[index].R, 1, 1, BMPFILE);	
 		}
-		address += 2;
+		address += Header.Width%4;
 	}
 	/*
 	for (unsigned int i = 0; i < Header.Height; i++) {
@@ -180,20 +199,28 @@ int main(void) {
 			printf("%02X\t", BMPColor[index].B);
 		}
 		printf("\n");
-	}*/
-	system("pause");
+	}*/	
+	COLORREF COLOR = RGB(255, 255, 255);
+	for (int i = Header.Height - 1; i >= 0; i--) {
+		for (unsigned int j = 0; j < Header.Width; j++) {
+			int index = i*Header.Width + j;
+			COLOR = RGB(BMPColor[index].R, BMPColor[index].G, BMPColor[index].B);
+			SetPixel(mydc, j + 500, Header.Height - 1 - i + 100, COLOR);
+		}
+	}
 	for(int i = Header.Height - 1; i >= 0; i--) {
 		for(unsigned int j = 0; j < Header.Width; j++) {
 			int index = i*Header.Width + j;
-			//printf("%d",index);
 			if (BMPColor[index].R == 0xFF && BMPColor[index].G == 0xFF && BMPColor[index].B == 0xFF)
-				printf(" ");
+				fprintf(OUTPUTFILE,"  ");
 			else
-				printf("1");
+				fprintf(OUTPUTFILE, "‚ñà‚ñà");
 		}
-		printf("\n");
+		fprintf(OUTPUTFILE, "\n");
 	}
+	ReleaseDC(myconsole, mydc);
 	fclose(BMPFILE);
+	fclose(OUTPUTFILE);
 	system("pause");
 	return 0;
 }
