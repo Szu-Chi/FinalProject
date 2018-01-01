@@ -115,7 +115,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\HSLconvert.c" />
     <ClCompile Include="..\..\source\main.c" />
+    <ClCompile Include="..\..\source\printImage.c" />
+    <ClCompile Include="..\..\source\ReadBMP.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\HSLconvert.h" />
+    <ClInclude Include="..\..\include\printImage.h" />
+    <ClInclude Include="..\..\include\ReadBMP.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

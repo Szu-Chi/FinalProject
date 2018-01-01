@@ -14,5 +14,25 @@
     <ClCompile Include="..\..\source\main.c">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\HSLconvert.c">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\printImage.c">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ReadBMP.c">
+      <Filter>source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\printImage.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\HSLconvert.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ReadBMP.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
